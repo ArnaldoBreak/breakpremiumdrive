@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Break Premium Drive</title>
+    <link rel="stylesheet" href="./css/style-copia.css">
+    <style>
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 30px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+        }
+        .login-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: #b59410;
+            color: white;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            border-radius: 4px;
+            transition: 0.3s;
+        }
+        .btn-login:hover {
+            background: #94790d;
+        }
+        .login-footer-links {
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+        .login-footer-links a {
+            color: #b59410;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .login-footer-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div style="font-weight: bold; color: #b59410; margin-bottom: 15px; font-size: 1.2rem;">Break Premium Drive</div>
+        
+        <h2 id="login-titulo">Acesso ao Sistema</h2>
+        <p id="login-subtitulo">Inicie sessão para aceder ao seu painel</p>
+        
+        <form id="form-login">
+            <input type="text" id="usuario" placeholder="Utilizador ou Email" required>
+            <input type="password" id="senha" placeholder="Palavra-passe" required>
+            <button type="submit" class="btn-login">Entrar</button>
+        </form>
+        
+        <p id="erro-login" style="color: red; margin-top: 15px; display: none;">Credenciais incorretas!</p>
+
+        <div class="login-footer-links" id="links-registo">
+            <p>Não tem uma conta de cliente? <a href="registro.html">Criar Conta</a></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const erro = document.getElementById("erro-login");
+            const titulo = document.getElementById("login-titulo");
+            const subtitulo = document.getElementById("login-subtitulo");
+            const campoUsuario = document.getElementById("usuario");
+            const campoSenha = document.getElementById("senha");
+            
+            // DETEÇÃO DE CONTEXTO: Verifica se o utilizador veio da interrupção de um agendamento/reserva
+            const temRedirecionamento = localStorage.getItem("redirecionarDepoisDoLogin");
+
+            if (temRedirecionamento) {
+                // Adapta a interface para o Cliente de Luxo de forma amigável
+                titulo.innerText = "Área do Cliente";
+                subtitulo.innerText = "Inicie sessão com a sua conta para prosseguir com a reserva ou test-drive premium.";
+                campoUsuario.placeholder = "O seu Email de cliente";
+                campoSenha.placeholder = "A sua Palavra-passe";
+            } else {
+                campoUsuario.placeholder = "Email";
+                campoSenha.placeholder = "Palavra-passe";
+            }
+
+            document.getElementById("form-login").addEventListener("submit", function(e) {
+                e.preventDefault();
+                erro.style.display = "none";
+                
+                const usuario = campoUsuario.value.trim();
+                const senha = campoSenha.value;
+
+                // FLUXO 1: É uma tentativa de login do Administrador
+                if (usuario === "admin" && senha === "admin123") {
+                    sessionStorage.setItem("adminAutenticado", "true");
+                    alert("Login efetuado com sucesso como Administrador!");
+                    window.location.href = "admin/dashboard.html";
+                    return;
+                }
+
+                // FLUXO 2: É um Cliente a tentar fazer login (veio do fluxo de test-drive ou quer aceder à área cliente)
+                if (temRedirecionamento || usuario.includes("@")) {
+                    // Para simulação local, aceita as credenciais e extrai o nome do email
+                    const nomeExtraido = usuario.split("@")[0];
+                    const nomeFormatado = nomeExtraido.charAt(0).toUpperCase() + nomeExtraido.slice(1);
+
+                    const sessaoCliente = {
+                        nome: nomeFormatado,
+                        nomeCompleto: nomeFormatado + " Cliente",
+                        email: usuario
+                    };
+
+                    // Salva a sessão ativa do cliente
+                    localStorage.setItem("clienteSessao", JSON.stringify(sessaoCliente));
+                    alert(`Sessão iniciada com sucesso!\nSeja bem-vindo de volta, ${nomeFormatado}.`);
+
+                    // Se veio interrompido de uma reserva, devolve-o para lá imediatamente!
+                    if (temRedirecionamento) {
+                        localStorage.removeItem("redirecionarDepoisDoLogin"); // Consome o token
+                        window.location.href = temRedirecionamento;
+                    } else {
+                        window.location.href = "admin/cliente.html"; // Vai para a área geral do cliente
+                    }
+                } else {
+                    erro.innerText = "Credenciais inválidas. Forneça os dados de acesso administrativo ou um e-mail válido de cliente.";
+                    erro.style.display = "block";
+                }
+            });
+        });
+    </script>
+</body>
+</html>

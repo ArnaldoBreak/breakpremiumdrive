@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamentos | Break Premium Drive</title>
+    <link rel="stylesheet" href="./css/style-copia.css">
+</head>
+<body>
+
+<header>
+    <div class="logo">Break Premium Drive</div>
+    <nav>
+        <ul>
+            <li><a href="catalogo.html">Veículos</a></li>
+            <li><a href="favoritos.html">Favoritos</a></li>
+            <li><a href="contacto.html">Contacto</a></li>
+            <li><a href="registro.html">Registro</a></li>
+            <li><a href="reservas.html">Reservas</a></li>
+        </ul>
+    </nav>
+</header>
+
+<section class="page-banner">
+    <h1>Pagamentos</h1>
+    <p>Efetue o pagamento da sua reserva ou taxa de test-drive de forma rápida e segura.</p>
+</section>
+
+<section class="pagamento-wrapper">
+    <div class="pagamento-container">
+        
+        <div class="pagamento-form">
+            <h2>Dados do Pagamento</h2>
+            <form onsubmit="alert('Processando Pagamento... Sucesso! O seu comprovativo de reserva automóvel foi enviado por e-mail.'); return false;">
+                <select id="metodoPagamento" onchange="alternarCamposCartao()" style="margin-bottom: 15px; width: 100%; padding: 10px; border-radius: 5px;">
+                    <option value="express">Multicaixa Express (Recomendado)</option>
+                    <option value="transferencia">Transferência Bancária / IBAN</option>
+                    <option value="visa">Cartão Visa</option>
+                    <option value="mastercard">MasterCard</option>
+                </select>
+
+                <input type="text" placeholder="Nome do Titular da Conta / Telemóvel" required style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc;">
+                
+                <div id="camposCartao">
+                    <input type="number" placeholder="Número do Cartão / Número de Telemóvel Express" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc;">
+                    <div class="card-row" style="display: flex; gap: 10px;">
+                        <input type="month" style="flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
+                        <input type="password" placeholder="CVV / PIN" style="flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #ccc;">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-pagar" style="margin-top: 15px; width: 100%; background: #b59410; color: white; border: none; padding: 12px; font-weight: bold; cursor: pointer; border-radius: 5px;">Efetuar Pagamento</button>
+            </form>
+        </div>
+
+        <div class="resumo-pagamento">
+            <h2>Resumo da Reserva</h2>
+            <div class="resumo-card" style="background: #f9f9f9; padding: 20px; border-radius: 8px; border: 1px solid #eee;">
+                <h3>Porsche 911 Carrera GTS</h3>
+                <p>Taxa de Reserva de Aluguer / Test-Drive Premium</p>
+                <hr style="margin: 15px 0; border: 0; border-top: 1px solid #ddd;">
+                <p>Sinal de Reserva: 50.000 Kz</p>
+                <p>Taxa Administrativa & Seguro: 2.500 Kz</p>
+                <hr style="margin: 15px 0; border: 0; border-top: 1px solid #ddd;">
+                <h3 style="color: #b59410;">Total: 52.500 Kz</h3>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<section class="historico-pagamentos" style="padding: 40px 20px; max-width: 1200px; margin: 0 auto;">
+    <h2>Histórico de Pagamentos</h2>
+    <div style="overflow-x: auto;">
+        <table class="tabela-pagamentos" style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+            <thead>
+                <tr style="background: #f4f4f4; text-align: left;">
+                    <th style="padding: 12px;">Data</th>
+                    <th style="padding: 12px;">Descrição</th>
+                    <th style="padding: 12px;">Valor</th>
+                    <th style="padding: 12px;">Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 12px;">01/06/2026</td>
+                    <td>Sinal de Reserva - Porsche 911</td>
+                    <td>52.500 Kz</td>
+                    <td><span class="badge pago" style="background: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">Pago</span></td>
+                </tr>
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 12px;">20/05/2026</td>
+                    <td>Taxa de Aluguer - Range Rover Autobiography</td>
+                    <td>35.000 Kz</td>
+                    <td><span class="badge pago" style="background: #28a745; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px;">Pago</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<footer>
+    <div class="footer-content">
+        <h3>Break Premium Drive</h3>
+        <p>Luxury & High-Performance Vehicles • Angola</p>
+        <p>© 2026 Todos os direitos reservados.</p>
+    </div>
+</footer>
+
+<script src="js/app.js"></script>
+<script>
+    // Mantém a função auxiliar para os campos se não estiver global no app.js
+    function alternarCamposCartao() {
+        const metodo = document.getElementById('metodoPagamento').value;
+        const camposCartao = document.getElementById('camposCartao');
+        if(metodo === 'transferencia') {
+            camposCartao.style.display = 'none';
+        } else {
+            camposCartao.style.display = 'block';
+        }
+    }
+</script>
+</body>
+</html>

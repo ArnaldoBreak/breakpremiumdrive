@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat | Break Premium Drive</title>
+    <link rel="stylesheet" href="./css/style-copia.css">
+</head>
+<body>
+
+<header>
+    <div class="logo">Break Premium Drive</div>
+    <nav>
+        <ul>
+            <li><a href="index.html">Vitrina Inicial</a></li>
+            <li><a href="catalogo.html">Veículos</a></li>
+            <li><a href="favoritos.html">Favoritos</a></li>
+            <li><a href="./admin/cliente.html">Login</a></li>
+            <li><a href="contacto.html">Contacto</a></li>
+            <li><a href="registro.html">Registro</a></li>
+        </ul>
+    </nav>
+</header>
+
+<section class="page-banner">
+    <h1>Chat com Especialista</h1>
+    <p>Converse diretamente com um consultor de viaturas premium e alta performance.</p>
+</section>
+
+<section class="chat-wrapper">
+    <div class="chat-container">
+        <div class="consultor-info">
+            <img src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" alt="Consultor Automóvel">
+            <h2>Especialista Premium</h2>
+            <p class="status-online">Online Agora</p>
+        </div>
+
+        <div class="chat-box">
+            <div class="chat-messages" id="chatMessages">
+                <div class="message received">
+                    Olá! Bem-vindo à OlgaS Premium Drive. Como posso ajudar na escolha do seu próximo supercarro hoje?
+                </div>
+                <div class="message sent">
+                    Gostaria de saber mais informações sobre o Porsche 911 Carrera GTS.
+                </div>
+                <div class="message received">
+                    Excelente escolha! Trata-se de uma máquina fantástica com motor biturbo de 6 cilindros opostos, suspensão desportiva ativa e acabamentos exclusivos em Alcântara. Está disponível para visualização no nosso showroom em Talatona.
+                </div>
+            </div>
+
+            <div class="chat-input">
+                <input type="text" id="mensagem" placeholder="Escreva a sua mensagem..." onkeypress="if(event.key === 'Enter') enviarMensagem()">
+                <button id="btnEnviarMensagem" onclick="enviarMensagem()">Enviar</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="footer-content">
+        <h3>Break Premium Drive</h3>
+        <p>Luxury & High-Performance Vehicles • Angola</p>
+        <p>© 2026 Todos os direitos reservados.</p>
+    </div>
+</footer>
+
+<script src="js/app.js"></script>
+<script>
+    function enviarMensagem() {
+        const input = document.getElementById('mensagem');
+        const container = document.getElementById('chatMessages');
+        const texto = input.value.trim();
+
+        if (texto !== "") {
+            // Cria a mensagem enviada pelo utilizador
+            const novaMensagem = document.createElement('div');
+            novaMensagem.className = 'message sent';
+            novaMensagem.innerText = texto;
+            container.appendChild(novaMensagem);
+
+            // Limpa o campo de texto
+            input.value = "";
+
+            // Auto-scroll para manter a última mensagem visível
+            container.scrollTop = container.scrollHeight;
+
+            // Simulação rápida de resposta automática após 1.5 segundos
+            setTimeout(() => {
+                const respostaAuto = document.createElement('div');
+                respostaAuto.className = 'message received';
+                respostaAuto.innerText = "Perfeito! O seu pedido foi registado. Um consultor premium entrará em contacto para agendar o seu atendimento exclusivo.";
+                container.appendChild(respostaAuto);
+                container.scrollTop = container.scrollHeight;
+            }, 1500);
+        }
+    }
+</script>
+</body>
+</html>
