@@ -1,0 +1,174 @@
+<!DOCTYPE html> 
+<html lang="pt">
+<head>
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Veículos | Break Premium Drive</title>
+    <link rel="stylesheet" href="./css/style-copia.css">
+</head>
+<body>
+
+<header>
+    <div class="logo">Break Premium Drive</div>
+    <nav>
+        <ul>
+            <li><a href="index.html">Vitrina Inicial</a></li>
+            <li><a href="./admin/cliente.html">Login</a></li>
+            <li><a href="contacto.html">Contacto</a></li>
+            <li><a href="registro.html">Registro</a></li>
+            <li><a href="chat.html">Chat</a></li>
+        </ul>
+    </nav>
+</header>
+
+<section class="page-banner">
+    <h1>Catálogo de Veículos</h1>
+    <p>Encontre o modelo premium ideal para a sua condução.</p>
+</section>
+
+<section class="search-area">
+    <div class="search-box-wrapper" style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; padding: 20px;">
+        <input type="text" id="pesquisa" placeholder="Pesquisar por modelo de carro...">
+        
+        <select id="filtroTipo">
+            <option value="todos">Todos os segmentos</option>
+            <option value="suv">SUVs e Crossovers</option>
+            <option value="sedan">Sedans Executivos</option>
+            <option value="desportivo">Desportivos & Coupés</option>
+            <option value="picape">Pick-ups & TT</option>
+        </select>
+
+        <select id="filtroNegocio">
+            <option value="todos">Todos os negócios</option>
+            <option value="comprar">Comprar</option>
+            <option value="alugar">Alugar / Rent-a-Car</option>
+        </select>
+
+        <select id="filtroLocalizacao">
+            <option value="todos">Todos os Showrooms</option>
+            <option value="Talatona">Talatona</option>
+            <option value="Miramar">Miramar</option>
+            <option value="Ilha de Luanda">Ilha de Luanda</option>
+            <option value="Maianga">Maianga</option>
+            <option value="Ingombota">Ingombota</option>
+            <option value="Patriota">Patriota</option>
+            <option value="Samba">Samba</option>
+            <option value="Viana">Viana</option>
+            <option value="Cacuaco">Cacuaco</option>
+        </select>
+
+        <button id="btnPesquisar" class="btn-gold">Pesquisar</button> 
+    </div>
+</section>
+
+<section class="featured">
+    <div class="featured-grid" id="grid-carros"></div>
+</section>
+
+<footer>
+    <div class="footer-content">
+        <h3>Break Premium Drive</h3>
+        <p>Luxury & High-Performance Vehicles • Angola</p>
+        <p>© 2026 Todos os direitos reservados.</p>
+    </div>
+</footer>
+
+<script src="js/carros-dados.js"></script>
+<script src="js/app.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const inputPesquisa = document.getElementById('pesquisa');
+        const selectTipo = document.getElementById('filtroTipo');
+        const selectNegocio = document.getElementById('filtroNegocio');
+        const selectLocalizacao = document.getElementById('filtroLocalizacao');
+        const btnPesquisar = document.getElementById('btnPesquisar');
+
+        // Processa e renderiza a filtragem de veículos com base na memória local
+        function filtrarCatalogo() {
+            const termo = inputPesquisa.value.toLowerCase();
+            const tipoSelected = selectTipo.value; 
+            const negocioSelected = selectNegocio.value;
+            const localizacaoSelected = selectLocalizacao.value;
+
+            // Busca os dados atualizados do LocalStorage de veículos
+            const carrosAtuais = JSON.parse(localStorage.getItem("bancoCarros")) || window.bancoCarros || [];
+
+            const carrosFiltrados = carrosAtuais.filter(carro => {
+                const bateNome = carro.nome.toLowerCase().includes(termo);
+                const bateTipo = tipoSelected === 'todos' || carro.tipo === tipoSelected;
+                const bateNegocio = negocioSelected === 'todos' || !carro.negocio || carro.negocio === negocioSelected;
+                
+                const zonaShowroom = carro.localizacao || "Luanda";
+                const bateLocal = localizacaoSelected === 'todos' || zonaShowroom.toLowerCase().includes(localizacaoSelected.toLowerCase());
+
+                return bateNome && bateTipo && bateNegocio && bateLocal;
+            });
+
+            // Executa a renderização local no grid correto de carros
+            renderizarGridLocal(carrosFiltrados);
+        }
+
+        function renderizarGridLocal(lista) {
+            const container = document.getElementById("grid-carros");
+            if (!container) return;
+            container.innerHTML = "";
+
+            if (lista.length === 0) {
+                container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #666; padding: 40px;">Nenhum veículo premium encontrado para os filtros selecionados em Luanda.</p>`;
+                return;
+            }
+
+            lista.forEach(carro => {
+                const card = document.createElement("div");
+                card.className = "featured-card";
+                
+                const fotoExibicao = (carro.imagens && carro.imagens.length > 0) ? carro.imagens[0] : carro.img;
+                const showroomExibicao = carro.localizacao || "Luanda";
+
+                card.innerHTML = `
+                    <img src="${fotoExibicao}" alt="${carro.nome}">
+                    <h3>${carro.nome}</h3>
+                    <p style="font-size: 13px; color: #b59410; margin-bottom: 5px;">📍 Showroom: ${showroomExibicao} • ${(carro.tipo || '').toUpperCase()}</p>
+                    <p><strong>${carro.preco.toLocaleString('pt-AO')} Kz</strong>${carro.negocio === 'alugar' ? ' <span style="font-size: 12px; color: #718096;">/ dia</span>' : ''}</p>
+                    
+                    <div style="margin: 10px 0; font-size: 0.9rem;">
+                        <input type="checkbox" class="compara-checkbox" data-id="${carro.id}" id="comp-${carro.id}">
+                        <label for="comp-${carro.id}"> Selecionar para Comparar</label>
+                    </div>
+
+                    <a href="detalhe-carro.html?id=${carro.id}">Ver Detalhes</a>
+                `;
+                container.appendChild(card);
+            });
+
+            // Atualiza o botão do comparador global do app.js se necessário
+            if (typeof adicionarBotaoComparar === "function") {
+                adicionarBotaoComparar();
+            }
+        }
+
+        // 1. CAPTURA DE PARÂMETROS DA URL (Vindo da Home)
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('tipo') || params.has('negocio') || params.has('localizacao')) {
+            if (params.get('tipo')) selectTipo.value = params.get('tipo');
+            if (params.get('negocio')) selectNegocio.value = params.get('negocio');
+            if (params.get('localizacao')) selectLocalizacao.value = params.get('localizacao');
+            
+            filtrarCatalogo();
+        } else {
+            // Se entrou direto no catálogo, mostra todos os veículos iniciais
+            const dadosIniciais = JSON.parse(localStorage.getItem("bancoCarros")) || window.bancoCarros || [];
+            renderizarGridLocal(dadosIniciais);
+        }
+
+        // 2. EVENTOS DE ATUALIZAÇÃO EM TEMPO REAL
+        if (btnPesquisar) btnPesquisar.addEventListener('click', filtrarCatalogo);
+        if (inputPesquisa) inputPesquisa.addEventListener('keyup', filtrarCatalogo);
+        if (selectTipo) selectTipo.addEventListener('change', filtrarCatalogo);
+        if (selectNegocio) selectNegocio.addEventListener('change', filtrarCatalogo);
+        if (selectLocalizacao) selectLocalizacao.addEventListener('change', filtrarCatalogo);
+    });
+</script>
+</body>
+</html>

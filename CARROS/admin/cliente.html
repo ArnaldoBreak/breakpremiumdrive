@@ -1,0 +1,153 @@
+<!DOCTYPE html> 
+<html lang="pt">
+<head>
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Área do Cliente | Break Premium Drive</title>
+    <link rel="stylesheet" href="../css/style-copia.css">
+</head>
+<body>
+
+<header>
+    <div class="logo">Break Premium Drive</div>
+    <nav>
+        <ul>
+            <li><a href="../catalogo.html">Veículos</a></li>
+            <li><a href="../favoritos.html">Favoritos</a></li>
+            <li><a href="../contacto.html">Contacto</a></li>
+            <li><a href="../reservas.html">Reservas</a></li>
+            <li><a href="../chat.html">Chat</a></li>
+            <li><a href="../pagamento.html">Pagamentos</a></li>
+            <li><a href="cliente.html">Área Cliente</a></li>
+            <li><a href="#" id="btn-logout" style="color: #e74c3c; font-weight: bold;">Sair</a></li>
+        </ul>
+    </nav>
+</header>
+
+<section class="page-banner">
+    <h1>Área do Cliente</h1>
+    <p>Gerencie os seus veículos, test-drives agendados e informações pessoais.</p>
+</section>
+
+<section class="cliente-wrapper">
+    <div class="cliente-dashboard">
+        
+        <div class="cliente-perfil">
+            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Cliente">
+            <h2 id="perfil-nome-cliente">Carregando...</h2>
+            <span class="badge-premium">Cliente Premium</span>
+        </div>
+        
+        <div class="cliente-cards">
+            <div class="cliente-card">
+                <h3>Favoritos</h3>
+                <p>Garagem de Desejos</p>
+                <a href="../favoritos.html" class="btn-cliente-link">Ver Favoritos</a>
+            </div>
+            
+            <div class="cliente-card">
+                <h3>Reservas</h3>
+                <p>Test-Drives Agendados</p>
+                <a href="../reservas.html" class="btn-cliente-link">Ver Reservas</a>
+            </div>
+            
+            <div class="cliente-card">
+                <h3>Pagamentos</h3>
+                <p>Histórico de Transações</p>
+                <a href="../pagamento.html" class="btn-cliente-link">Ver Pagamentos</a>
+            </div>
+            
+            <div class="cliente-card">
+                <h3>Catálogo</h3>
+                <p>Explorar Novas Máquinas</p>
+                <a href="../catalogo.html" class="btn-cliente-link">Ver Veículos</a>
+            </div>
+        </div>
+        
+    </div>
+</section>
+
+<section class="historico-section">
+    <h2>Últimas Atividades</h2>
+    <div style="overflow-x: auto;">
+        <table class="tabela-cliente">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Atividade</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-atividades-corpo">
+                <tr>
+                    <td>14/06/2026</td>
+                    <td>Sessão Iniciada no Painel</td>
+                    <td><span class="badge-status-ok" style="background: #2ecc71; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem;">Ativo</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<footer>
+    <div class="footer-content">
+        <h3>Break Premium Drive</h3>
+        <p>Luxury & High-Performance Vehicles • Angola</p>
+        <p>© 2026 Todos os direitos reservados.</p>
+    </div>
+</footer>
+
+<script src="../js/app.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // 1. Verificar e recuperar a sessão do cliente autenticado
+        const clienteLogado = JSON.parse(localStorage.getItem("clienteSessao"));
+
+        // Proteção de Rota: Se não houver cliente logado, barra o acesso e redireciona
+        if (!clienteLogado) {
+            alert("Acesso restrito. Por favor, faça login para aceder à sua Área de Cliente.");
+            window.location.href = "../login.html";
+            return;
+        }
+
+        // 2. Injetar o nome real do utilizador registado/logado no perfil
+        const campoNome = document.getElementById("perfil-nome-cliente");
+        if (campoNome) {
+            campoNome.innerText = clienteLogado.nomeCompleto || clienteLogado.nome;
+        }
+
+        // 3. Tornar o histórico interativo e integrado aos favoritos do stand
+        const favoritosGuardados = JSON.parse(localStorage.getItem("favoritos")) || [];
+        const tabelaCorpo = document.getElementById("tabela-atividades-corpo");
+
+        if (tabelaCorpo && favoritosGuardados.length > 0) {
+            // Adiciona dinamicamente no topo da tabela os veículos favoritados recentemente
+            favoritosGuardados.forEach(nomeCarro => {
+                const novaLinha = document.createElement("tr");
+                novaLinha.innerHTML = `
+                    <td>Hoje</td>
+                    <td>Adicionou "${nomeCarro}" aos Favoritos</td>
+                    <td><span class="badge-status-ok" style="background: #b59410; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.85rem;">Guardado</span></td>
+                `;
+                tabelaCorpo.insertBefore(novaLinha, tabelaCorpo.firstChild);
+            });
+        }
+
+        // 4. Configuração do Botão "Sair" (Logout)
+        const btnLogout = document.getElementById("btn-logout");
+        if (btnLogout) {
+            btnLogout.addEventListener("click", (e) => {
+                e.preventDefault();
+                
+                if (confirm("Deseja realmente terminar a sua sessão na OlgaS Premium Drive?")) {
+                    localStorage.removeItem("clienteSessao");
+                    alert("Sessão terminada com sucesso.");
+                    window.location.href = "../index4.html";
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>

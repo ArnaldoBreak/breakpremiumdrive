@@ -1,0 +1,222 @@
+<!DOCTYPE html> 
+<html lang="pt">
+<head>
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservar Test-Drive | Break Premium Drive</title>
+    <link rel="stylesheet" href="./css/style-copia.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+<header>
+    <div class="logo">Break Premium Drive</div>
+    <nav>
+        <ul>
+            <li><a href="index.html">Vitrina Inicial</a></li>
+            <li><a href="catalogo.html">Veículos</a></li>
+            <li><a href="favoritos.html">Favoritos</a></li>
+            <li><a href="admin/cliente.html">Área Cliente</a></li>
+            <li><a href="contacto.html">Contacto</a></li>
+            <li><a href="registro.html">Registro</a></li>
+            <li><a href="pagamento.html">Pagamentos</a></li>
+            <li id="menu-auth"><a href="login.html" class="btn-auth">Entrar / Criar Conta</a></li>
+        </ul>
+    </nav>
+</header>
+
+<section class="page-banner">
+    <h1>Reservar Test-Drive</h1>
+    <p>Agende uma experiência de condução com a máquina dos seus sonhos.</p>
+</section>
+
+<section class="reserva-wrapper">
+    <div class="reserva-container">
+        
+        <div class="reserva-formulario">
+            <h2>Novo Agendamento</h2>
+            <form id="form-nova-reserva">
+                <input type="text" id="reserva-nome" placeholder="Nome Completo" required>
+                <input type="email" id="reserva-email" placeholder="Email" required>
+                
+                <select id="reserva-veiculo" required>
+                    <option value="">Selecionar Veículo</option>
+                    <option value="Porsche 911 Carrera GTS">Porsche 911 Carrera GTS</option>
+                    <option value="Range Rover Autobiography">Range Rover Autobiography</option>
+                    <option value="Mercedes-AMG GT">Mercedes-AMG GT</option>
+                    <option value="BMW M760Li V12">BMW M760Li V12</option>
+                </select>
+                
+                <div style="display: flex; gap: 15px;">
+                    <input type="date" id="reserva-data" style="flex: 1;" required>
+                    <input type="time" id="reserva-hora" style="flex: 1;" required>
+                </div>
+                
+                <textarea id="reserva-obs" rows="5" placeholder="Observações ou preferências para o test-drive (ex: pacote de pista, acompanhante, etc.)"></textarea>
+                <button type="submit" class="btn-reserva">Confirmar Reserva</button>
+            </form>
+        </div>
+
+        <div class="reserva-info">
+            <h2>Garantias OlgaS Premium Drive</h2>
+            
+            <div class="info-card">
+                <h3>✔ Experiência Personalizada</h3>
+                <p>Escolha o melhor horário para testar a viatura com total tranquilidade e privacidade.</p>
+            </div>
+            
+            <div class="info-card">
+                <h3>✔ Especialista de Produto</h3>
+                <p>Um piloto instrutor especializado acompanhará o trajeto para demonstrar toda a performance.</p>
+            </div>
+            
+            <div class="info-card">
+                <h3>✔ Segurança & Certificação</h3>
+                <p>Agendamentos integrados, seguro de cobertura total para o trajeto e confirmação imediata.</p>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<section class="historico-reservas">
+    <h2>Meus Agendamentos</h2>
+    <div style="overflow-x: auto;">
+        <table class="tabela-reservas">
+            <thead>
+                <tr>
+                    <th>Veículo</th>
+                    <th>Data</th>
+                    <th>Hora</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody id="tabela-reservas-corpo">
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<footer>
+    <div class="footer-content">
+        <h3>Break Premium Drive</h3>
+        <p>Luxury & High-Performance Vehicles • Angola</p>
+        <p>© 2026 Todos os direitos reservados.</p>
+    </div>
+</footer>
+
+<script src="js/carros-dados.js"></script>
+<script src="js/app.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // 1. Controlo e Validação de Sessão do Cliente
+        const clienteLogado = JSON.parse(localStorage.getItem("clienteSessao"));
+        const menuAuth = document.getElementById('menu-auth');
+
+        if (clienteLogado) {
+            if (menuAuth) {
+                menuAuth.innerHTML = `<a href="admin/cliente.html" style="color: #b59410;">Olá, ${clienteLogado.nome} 👋</a>`;
+            }
+            // Autopreenche e protege os dados do utilizador ativo
+            document.getElementById('reserva-nome').value = clienteLogado.nomeCompleto || clienteLogado.nome;
+            document.getElementById('reserva-email').value = clienteLogado.email;
+            document.getElementById('reserva-nome').readOnly = true;
+            document.getElementById('reserva-email').readOnly = true;
+            document.getElementById('reserva-nome').style.background = "#eeeeee";
+            document.getElementById('reserva-email').style.background = "#eeeeee";
+        }
+
+        // 2. Detetar ID do veículo vindo da URL para pré-seleção
+        const params = new URLSearchParams(window.location.search);
+        const idCarro = parseInt(params.get('id'));
+        const selectVeiculo = document.getElementById('reserva-veiculo');
+
+        if (idCarro && selectVeiculo) {
+            const listaCarros = JSON.parse(localStorage.getItem("bancoCarros")) || window.bancoCarros || [];
+            const carroSelecionado = listaCarros.find(item => item.id === idCarro);
+            
+            if (carroSelecionado) {
+                // Procura se o veículo já existe nas opções do select
+                let opcaoExiste = false;
+                for (let i = 0; i < selectVeiculo.options.length; i++) {
+                    if (selectVeiculo.options[i].value === carroSelecionado.nome) {
+                        selectVeiculo.selectedIndex = i;
+                        opcaoExiste = true;
+                        break;
+                    }
+                }
+                // Se for uma viatura nova inserida no inventário, adiciona dinamicamente no select
+                if (!opcaoExiste) {
+                    const novaOpcao = document.createElement("option");
+                    novaOpcao.value = carroSelecionado.nome;
+                    novaOpcao.text = carroSelecionado.nome;
+                    selectVeiculo.add(novaOpcao);
+                    selectVeiculo.value = carroSelecionado.nome;
+                }
+            }
+        }
+
+        // 3. Renderizar Histórico Dinâmico de Reservas
+        const renderizarReservas = () => {
+            const tabelaCorpo = document.getElementById('tabela-reservas-corpo');
+            if (!tabelaCorpo) return;
+
+            // Carrega reservas guardadas locais ou define uma lista base padrão
+            let reservas = JSON.parse(localStorage.getItem("listaReservas")) || [
+                { veiculo: "Porsche 911 Carrera GTS", data: "15/06/2026", hora: "10:00", estado: "Confirmada" },
+                { veiculo: "Range Rover Autobiography", data: "22/06/2026", hora: "14:30", estado: "Pendente" }
+            ];
+
+            tabelaCorpo.innerHTML = reservas.map(res => {
+                const classeBadge = res.estado.toLowerCase() === 'confirmada' ? 'badge-confirmada' : 'badge-pendente';
+                return `
+                    <tr>
+                        <td>${res.veiculo || res.imovel}</td>
+                        <td>${res.data}</td>
+                        <td>${res.hora}</td>
+                        <td><span class="badge ${classeBadge}">${res.estado}</span></td>
+                    </tr>
+                `;
+            }).join('');
+        };
+
+        renderizarReservas();
+
+        // 4. Capturar Envio de Nova Reserva
+        const formReserva = document.getElementById('form-nova-reserva');
+        if (formReserva) {
+            formReserva.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const veiculoNome = selectVeiculo.value;
+                const dataRaw = document.getElementById('reserva-data').value;
+                const horaValue = document.getElementById('reserva-hora').value;
+
+                // Formatar data de YYYY-MM-DD para DD/MM/YYYY
+                const dataFormatada = dataRaw.split('-').reverse().join('/');
+
+                const novaReserva = {
+                    veiculo: veiculoNome,
+                    data: dataFormatada,
+                    hora: horaValue,
+                    estado: "Pendente"
+                };
+
+                // Guardar no histórico local
+                let reservasAtuais = JSON.parse(localStorage.getItem("listaReservas")) || [
+                    { veiculo: "Porsche 911 Carrera GTS", data: "15/06/2026", hora: "10:00", estado: "Confirmada" },
+                    { veiculo: "Range Rover Autobiography", data: "22/06/2026", hora: "14:30", estado: "Pendente" }
+                ];
+
+                reservasAtuais.unshift(novaReserva); // Adiciona no topo
+                localStorage.setItem("listaReservas", JSON.stringify(reservasAtuais));
+
+                alert('Test-Drive agendado com sucesso!\nRedirecionando para a taxa de confirmação de reserva...');
+                window.location.href = 'pagamento.html';
+            });
+        }
+    });
+</script>
+</body>
+</html>

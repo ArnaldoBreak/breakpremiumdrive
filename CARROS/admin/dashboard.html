@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo | Break Premium Drive</title>
+    <link rel="stylesheet" href="../css/style-copia.css">
+    
+    <script>
+        // Validação de segurança antes de renderizar a página
+        if (sessionStorage.getItem("adminAutenticado") !== "true") {
+            alert("Acesso negado! Por favor, faça login primeiro.");
+            window.location.href = "../login.html";
+        }
+    </script>
+</head>
+<body class="admin-body">
+
+    <header>
+        <div class="logo">Break Admin Panel</div>
+        <nav>
+            <ul>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="chat.html">Chat</a></li>
+                <li><a href="#" onclick="logoutAdmin()" style="color: #e74c3c; font-weight: bold;">Sair</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="admin-main">
+        <h2>Gestão de Frota Premium</h2>
+        
+        <section class="admin-form-box">
+            <h3 id="form-titulo">Adicionar Novo Veículo</h3>
+            <form id="form-cadastro">
+                
+                <div class="form-group">
+                    <label for="admin-nome">Modelo do Veículo:</label>
+                    <input type="text" id="admin-nome" required placeholder="Ex: Porsche 911 Carrera GTS">
+                </div>
+                
+                <div class="form-group">
+                    <label for="admin-tipo">Categoria:</label>
+                    <select id="admin-tipo">
+                        <option value="superdesportivo">Superdesportivo</option>
+                        <option value="suv">SUV de Luxo</option>
+                        <option value="sedan">Sedan Executivo</option>
+                        <option value="hipercarro">Hipercarro</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="admin-localizacao">Showroom / Localização:</label>
+                    <input type="text" id="admin-localizacao" required placeholder="Ex: Talatona, Luanda">
+                </div>
+
+                <div class="form-group">
+                    <label for="admin-preco">Preço (Kz):</label>
+                    <input type="number" id="admin-preco" required placeholder="Ex: 250000000">
+                </div>
+                
+                <div class="form-group">
+                    <label for="admin-img">URL da Imagem:</label>
+                    <input type="url" id="admin-img" required placeholder="Link de uma foto do veículo">
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px;">
+                    <div class="form-group">
+                        <label for="admin-potencia">Potência (cv):</label>
+                        <input type="number" id="admin-potencia" min="0" placeholder="Ex: 480">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="admin-ano">Ano de Fabrico:</label>
+                        <input type="number" id="admin-ano" min="1900" max="2027" placeholder="Ex: 2025">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="admin-transmissao">Transmissão:</label>
+                        <select id="admin-transmissao">
+                            <option value="Automatica">Automática</option>
+                            <option value="Manual">Manual</option>
+                            <option value="Sequencial">Sequencial</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="admin-combustivel">Combustível:</label>
+                        <select id="admin-combustivel">
+                            <option value="Gasolina">Gasolina</option>
+                            <option value="Hibrido">Híbrido</option>
+                            <option value="Eletrico">Elétrico</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 30px; margin: 20px 0; padding: 10px; background: rgba(197, 160, 89, 0.05); border-radius: 6px;">
+                    <div style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="admin-garantia" style="width: auto; cursor: pointer;">
+                        <label for="admin-garantia" style="margin: 0; cursor: pointer; font-weight: 500;">Garantia de Fábrica</label>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="admin-pack-desportivo" style="width: auto; cursor: pointer;">
+                        <label for="admin-pack-desportivo" style="margin: 0; cursor: pointer; font-weight: 500;">Pack Desportivo Premium</label>
+                    </div>
+                </div>
+
+                <button type="submit" id="btn-submeter-form" class="btn-admin-submit">Cadastrar Viatura</button>
+            </form>
+        </section>
+
+        <section class="admin-table-box">
+            <h3>Veículos no Sistema</h3>
+            <div style="overflow-x: auto;">
+                <table class="tabela-admin">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Modelo</th>
+                            <th>Categoria</th>
+                            <th>Localização</th>
+                            <th>Preço</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabela-admin-imoveis">
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="../js/carros-dados.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
